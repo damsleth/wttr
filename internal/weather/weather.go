@@ -301,22 +301,22 @@ func (s *WeatherService) computeResponse(
 
 	locStr := opts.Location
 
-	if ipData != nil {
-		if autoDetect {
-			if ipData.City == "" {
-				locStr = fmt.Sprintf("%s,%s", ipData.Latitude, ipData.Longitude)
-			} else {
-				locStr = fmt.Sprintf("%s, %s, %s", ipData.City, ipData.Region, ipData.CountryCode)
-				// 	log.Printf("Using old style location for: %s, %s, %s\n", ipData.City, ipData.Region, ipData.CountryCode)
-				// 	locStr = ipData.City
-			}
+	if ipData != nil && autoDetect {
+		// Only build a location from geo data we can actually use. If neither a
+		// city nor a coordinate pair resolved, leave locStr empty so it falls
+		// through to the default below instead of becoming garbage like ",".
+		switch {
+		case ipData.City != "":
+			locStr = fmt.Sprintf("%s, %s, %s", ipData.City, ipData.Region, ipData.CountryCode)
+		case ipData.Latitude != "" && ipData.Longitude != "":
+			locStr = fmt.Sprintf("%s,%s", ipData.Latitude, ipData.Longitude)
 		}
 	}
 	tracker.Add("Determine location string + IP lookup", time.Since(start))
 
 	if locStr == "" {
-		// Temporary use Berlin as the default location
-		locStr = "Berlin"
+		// Default location when no query is given and geolocation fails.
+		locStr = "Oslo"
 		log.Println("no location could be determined")
 	}
 
