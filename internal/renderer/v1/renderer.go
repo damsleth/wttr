@@ -136,11 +136,6 @@ func (r *V1Renderer) Render(query domain.Query, localizer localization.Localizer
 				l10n.Text("LOCATION"),
 				query.Location.FullAddress, query.Location.Latitude, query.Location.Longitude))
 		}
-
-		if opts.Output != "html" && !opts.NoFollowLine {
-			followICforUpdates := l10n.Text("FOLLOW_ME")
-			sb.WriteString("\n" + followICforUpdates + "\n")
-		}
 	}
 
 	return domain.RenderOutput{
