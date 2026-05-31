@@ -7,3 +7,6 @@ log/
 *.swp
 *.mmdb
 *.dat
+
+# Local deployment config — contains API keys (OpenCage, etc.)
+config.yaml
